@@ -87,7 +87,7 @@ function sex()
             print(debug.traceback())
             local data = {
                 ["content"] = "",
-                ["username"] = "LOLI WAR AUTO",
+                ["username"] = "LOLIWAR AUTO",
                 ["avatar_url"] = "https://tr.rbxcdn.com/e5b5844fb26df605986b94d87384f5fb/150/150/Image/Jpeg",
                 ["embeds"] = {
                     {
