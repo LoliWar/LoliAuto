@@ -1,3 +1,4 @@
+---// Loading Section \\---
 task.wait(2)
 repeat  task.wait() until game:IsLoaded()
 if game.PlaceId == 8304191830 then
@@ -8,6 +9,8 @@ else
     game:GetService("ReplicatedStorage").endpoints.client_to_server.vote_start:InvokeServer()
     repeat task.wait() until game:GetService("Workspace")["_waves_started"].Value == true
 end
+------------------------------
+
 
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
@@ -15,6 +18,61 @@ local mouse = game.Players.LocalPlayer:GetMouse()
 local UserInputService = game:GetService("UserInputService")
 
 getgenv().savefilename = "AnimeAdventures_"..game.Players.LocalPlayer.Name..".json"
+
+--Webhook sender
+local function webhook()
+	pcall(function()
+		local url = tostring(getgenv().weburl) --webhook
+		print("webhook?")
+		if url == "" then
+			return
+		end
+
+		gems = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.GoldGemXP.GemReward.Main.Amount.Text)
+		cwaves = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text
+		ctime = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.Timer.Text
+		waves = cwaves:split(": ")
+		ttime = ctime:split(": ")
+
+		local data = {
+			["content"] = "",
+			["username"] = "LOLIWAR BOT",
+			["avatar_url"] = "https://tr.rbxcdn.com/e5b5844fb26df605986b94d87384f5fb/150/150/Image/Jpeg",
+			["embeds"] = {
+				{
+					["author"] = {
+						["name"] = "Anime Adventures | Result ✔",
+						["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
+					},					
+					["fields"] = {
+						{
+							["name"] = "Total Waves:",
+							["value"] = tostring(waves[2]) ..
+								" <:wave:997136622363627530>",
+							["inline"] = true
+						}, {
+							["name"] = "Recieved Gems:",
+							["value"] = gems .. " <:gem:997123585476927558>",
+							["inline"] = true
+						}, {
+							["name"] = "Total Time:",
+							["value"] = tostring(ttime[2]) .. " ⏳",
+							["inline"] = true
+						}
+					}
+				}
+			}
+		}
+
+		local porn = game:GetService("HttpService"):JSONEncode(data)
+
+		local headers = {["content-type"] = "application/json"}
+		request = http_request or request or HttpPost or syn.request or http.request
+		local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
+		warn("Sending webhook notification...")
+		request(sex)
+	end)
+end
 
 function sex()
     -- reads jsonfile
@@ -28,8 +86,6 @@ function sex()
     getgenv().autosell = data.autosell
     getgenv().AutoFarm = data.autofarm
     getgenv().weburl = data.webhook
-    -- getgenv().unitname = data.unitname
-    -- getgenv().unitid = data.unitid
     getgenv().autostart = data.autostart
     getgenv().autoupgrade = data.autoupgrade
     getgenv().difficulty = data.difficulty
@@ -68,64 +124,10 @@ function sex()
     --------------------------------------------------
     --------------------------------------------------
     -- Uilib Shits
-    local DiscordLib = loadstring(game:HttpGet "https://raw.githubusercontent.com/ArponAG/Scripts/main/discordlib")()
-    local win = DiscordLib:Window("Anime Adventures v0.6".." - "..tostring(identifyexecutor()))
+
+    local DiscordLib = loadstring(game:HttpGet "https://raw.githubusercontent.com/Forever4D/Lib/main/DiscordLib2.lua")()
+    local win = DiscordLib:Window("[🌊UPD 1] Anime Adventures v0.9".." - "..tostring(identifyexecutor()))
     local serv = win:Server("Anime Adventures", "http://www.roblox.com/asset/?id=6031075938")
-
-    local unitinfo
-
-    --Webhook sender
-    function webhook()
-        pcall(function()
-            gems = tostring(game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.GoldGemXP.GemReward.Main.Amount.Text)
-            cwaves = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.WavesCompleted.Text
-            ctime = game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Holder.Middle.Timer.Text
-            waves = cwaves:split(": ")
-            ttime = ctime:split(": ")
-
-            local url = tostring(getgenv().weburl) --webhook
-            print(debug.traceback())
-            local data = {
-                ["content"] = "",
-                ["username"] = "LOLIWAR AUTO",
-                ["avatar_url"] = "https://tr.rbxcdn.com/e5b5844fb26df605986b94d87384f5fb/150/150/Image/Jpeg",
-                ["embeds"] = {
-                    {
-                        ["author"] = {
-                            ["name"] = "Anime Adventures | Result ✔",
-                            ["icon_url"] = "https://cdn.discordapp.com/emojis/997123585476927558.webp?size=96&quality=lossless"
-                        },
-                        ["fields"] = {
-                            {
-                                ["name"] = "Total Waves:",
-                                ["value"] = tostring(waves[2]) ..
-                                    " <:wave:997136622363627530>",
-                                ["inline"] = true
-                            }, {
-                                ["name"] = "Recieved Gems:",
-                                ["value"] = gems .. " <:gem:997123585476927558>",
-                                ["inline"] = true
-                            }, {
-                                ["name"] = "Total Time:",
-                                ["value"] = tostring(ttime[2]) .. " ⏳",
-                                ["inline"] = true
-                            }
-                        }
-                    }
-                }
-            }
-
-            local porn = game:GetService("HttpService"):JSONEncode(data)
-
-            local headers = {["content-type"] = "application/json"}
-            request = http_request or request or HttpPost or syn.request or http.request
-            local sex = {Url = url, Body = porn, Method = "POST", Headers = headers}
-            warn("Sending webhook notification...")
-            request(sex)
-        end)
-
-    end
-
             
     if game.PlaceId == 8304191830 then
         local unitselecttab = serv:Channel("Select Units")
@@ -136,7 +138,7 @@ function sex()
 
         local Units = {}
 
-        function loadUnit()
+        local function loadUnit()
             repeat task.wait() until game.Players.LocalPlayer.PlayerGui:FindFirstChild("collection"):FindFirstChild("grid"):FindFirstChild("List"):FindFirstChild("Outer"):FindFirstChild("UnitFrames")
             task.wait(2)
             table.clear(Units)
@@ -150,7 +152,7 @@ function sex()
 
         loadUnit()
 
-        function Equip()
+        local function Equip()
             game:GetService("ReplicatedStorage").endpoints.client_to_server.unequip_all:InvokeServer()
             for i = 1, 4 do
                 local unitinfo = getgenv().SelectedUnits["U" .. i]
@@ -164,33 +166,29 @@ function sex()
             updatejson()
         end
 
-        local drop = unitselecttab:Dropdown("Unit 1", Units, function(bool)
+        local drop = unitselecttab:Dropdown("Unit 1", Units, getgenv().SelectedUnits["U1"], function(bool)
             getgenv().SelectedUnits["U1"] = bool
-            --print("U1", bool, getgenv().SelectedUnits["U1"])
             Equip()
-        end) -- select unit dropdown end
+        end)
 
-        local drop2 = unitselecttab:Dropdown("Unit 2", Units, function(bool)
+        local drop2 = unitselecttab:Dropdown("Unit 2", Units, getgenv().SelectedUnits["U2"], function(bool)
             getgenv().SelectedUnits["U2"] = bool
-            --print("U2", bool, getgenv().SelectedUnits["U2"])
             Equip()
         end)
 
-        local drop3 = unitselecttab:Dropdown("Unit 3", Units, function(bool)
+        local drop3 = unitselecttab:Dropdown("Unit 3", Units, getgenv().SelectedUnits["U3"], function(bool)
             getgenv().SelectedUnits["U3"] = bool
-            --print("U3", bool, getgenv().SelectedUnits["U3"])
             Equip()
         end)
 
-        local drop4 = unitselecttab:Dropdown("Unit 4", Units, function(bool)
+        local drop4 = unitselecttab:Dropdown("Unit 4", Units, getgenv().SelectedUnits["U4"], function(bool)
             getgenv().SelectedUnits["U4"] = bool
-            --print("U4", bool, getgenv().SelectedUnits["U4"])
             Equip()
         end)
         --------------// Refresh Unit List \\-------------
 
         unitselecttab:Button("Refresh Unit List", function()
-            drop:Clear() -- clears list
+            drop:Clear()
             drop2:Clear()
             drop3:Clear()
             drop4:Clear()
@@ -208,7 +206,8 @@ function sex()
                 U3 = nil,
                 U4 = nil
             }
-        end) -- refresh list end
+        end) 
+
         unitselecttab:Label(" ")
         unitselecttab:Label(" ")
 
@@ -216,11 +215,6 @@ function sex()
         ------------------ Auto Farm Tab -----------------
         --------------------------------------------------
         
-        autofarmtab:Textbox("Webhook URL {Press Enter}", "Insert url here! {Press Enter}", false, function(web_url)
-            getgenv().weburl = web_url
-            updatejson()
-        end)
-
         autofarmtab:Toggle("Auto Farm", getgenv().AutoFarm, function(bool)
             getgenv().AutoFarm = bool
             updatejson()
@@ -276,7 +270,7 @@ function sex()
             updatejson()
         end)
 
-        autofarmtab:Toggle("Auto Sell At X Wave", getgenv().autosell, function(x)
+        autofarmtab:Toggle("Auto Sell at spectic Wave", getgenv().autosell, function(x)
             getgenv().autosell = x
             updatejson()
             if getgenv().autosell == false then
@@ -284,14 +278,14 @@ function sex()
             end
         end)
 
-        autofarmtab:Textbox("Select Wave Number for Auto Sell", "Number", false, function(t)
+        autofarmtab:Textbox("Select Wave Number for Auto Sell {Press Enter}", getgenv().sellatwave, false, function(t)
             getgenv().sellatwave = tonumber(t)
             updatejson()
         end)
 
         
 
-        local worlddrop = autofarmtab:Dropdown("Select World", {"Plannet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village"}, function(world)
+        local worlddrop = autofarmtab:Dropdown("Select World", {"Plannet Namak", "Shiganshinu District", "Snowy Town","Hidden Sand Village"}, getgenv().world, function(world)
             getgenv().world = world
             updatejson()
             if world == "Plannet Namak" then
@@ -330,34 +324,42 @@ function sex()
             end
         end)
 
-        getgenv().leveldrop = autofarmtab:Dropdown("Select Level", getgenv().levels, function(level)
+        getgenv().leveldrop = autofarmtab:Dropdown("Select Level", getgenv().levels, getgenv().level, function(level)
             getgenv().level = level
             updatejson()
         end)
 
-        getgenv().diff = autofarmtab:Dropdown("Select Difficulty", {"Normal", "Hard"}, function(diff)
+        getgenv().diff = autofarmtab:Dropdown("Select Difficulty", {"Normal", "Hard"}, getgenv().difficulty, function(diff)
             getgenv().difficulty = diff
             updatejson()
         end)
+
+		local webhooktab = serv:Channel("Webhook")
+		webhooktab:Label("Webhook sends notification in discord everytime\nGame is Finished!")
+		
+		local webhoolPlaceholder
+		if getgenv().weburl == "" then
+			webhoolPlaceholder = "Insert url here!"
+		else
+			webhoolPlaceholder = getgenv().weburl
+		end
+		webhooktab:Textbox("Webhook URL {Press Enter}" , webhoolPlaceholder, false, function(web_url)
+            getgenv().weburl = web_url
+            updatejson()
+        end)
+
         autofarmtab:Label(" ")
         autofarmtab:Label(" ")
 
     else -- When in a match
+
         local autofarmtab = serv:Channel("Auto Farm")
         local autoseltab = serv:Channel("Auto Sell")
+		local webhooktab = serv:Channel("Webhook")
 
         game.Players.LocalPlayer.PlayerGui.MessageGui.Enabled = false
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error.Volume = 0
         game:GetService("ReplicatedStorage").packages.assets["ui_sfx"].error_old.Volume = 0
-
-        autofarmtab:Textbox("Webhook URL {Press Enter}", "Insert url here! {Press Enter}", false, function(web_url)
-            getgenv().weburl = web_url
-            updatejson()
-        end)
-        autofarmtab:Button("Test Webhook", function()
-            webhook()
-        end)
-
 
         autofarmtab:Toggle("Auto Farm", getgenv().AutoFarm, function(bool)
             getgenv().AutoFarm = bool
@@ -368,7 +370,7 @@ function sex()
             updatejson()
         end)
 
-        autoseltab:Toggle("Auto Sell At X Wave", getgenv().autosell, function(x)
+        autoseltab:Toggle("Auto Sell at Specfic Wave", getgenv().autosell, function(x)
             getgenv().autosell = x
             updatejson()
             if getgenv().autosell == false then
@@ -377,7 +379,7 @@ function sex()
 
         end)
 
-        autoseltab:Textbox("Select Wave Number for Auto Sell", "Number", false, function(t)
+        autoseltab:Textbox("Select Wave Number for Auto Sell {Press Enter}", getgenv().sellatwave, false, function(t)
             getgenv().sellatwave = tonumber(t)
             updatejson()
         end)
@@ -414,35 +416,51 @@ function sex()
                 end)
         end
 
-        -- // Set Position
+        --// Set Position \\--
         autofarmtab:Button("Set Unit 1 Postion", function()
-            DiscordLib:Notification("Set Position for Unit 1 to Spawn",
+            DiscordLib:Notification("Set Unit 1 Spawn Position",
                 "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
                 "Done")
             MouseClick("UP1")
         end)
 
         autofarmtab:Button("Set Unit 2 Postion", function()
-            DiscordLib:Notification("Set Position for Unit 2 to Spawn",
+            DiscordLib:Notification("Set Unit 2 Spawn Position",
                 "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
                 "Done")
             MouseClick("UP2")
         end)
         autofarmtab:Button("Set Unit 3 Postion", function()
-            DiscordLib:Notification("Set Position for Unit 3 to Spawn",
+            DiscordLib:Notification("Set Unit 3 Spawn Position",
                 "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
                 "Done")
             MouseClick("UP3")
         end)
         autofarmtab:Button("Set Unit 4 Postion", function()
-            DiscordLib:Notification("Set Position for Unit 4 to Spawn",
+            DiscordLib:Notification("Set Unit 4 Spawn Position",
                 "Click on the floor to set the spawn unit position!\n (don't press \"Done\" until you set position)",
                 "Done")
             MouseClick("UP4")
         end)
 
+		--//Webhook Tab (in-game)\\--
+		webhooktab:Label("Webhook sends notification in discord everytime game Finishes.")
+		local webhoolPlaceholder
+		if getgenv().weburl == "" then
+			webhoolPlaceholder = "Insert url here!"
+		else
+			webhoolPlaceholder = getgenv().weburl
+		end
+		webhooktab:Textbox("Webhook URL {Press Enter}" , webhoolPlaceholder, false, function(web_url)
+            getgenv().weburl = web_url
+            updatejson()
+        end)
+        webhooktab:Button("Test Webhook", function()
+            webhook()
+        end)
+
         -- set unit position end--
-        autofarmtab:Label("--- Saved Config ---")
+        autofarmtab:Label("--- Saved Config (Doesn't Refresh) ---")
         autofarmtab:Label("Auto Sell at Wave: " .. tostring(getgenv().sellatwave))
         autofarmtab:Label("Webhook: " .. tostring(getgenv().weburl))
         autofarmtab:Label("Auto Farm: " .. tostring(getgenv().AutoFarm))
@@ -454,6 +472,7 @@ function sex()
         autofarmtab:Label("Selected Level: " .. tostring(getgenv().level))
         autofarmtab:Label(" ")
         autofarmtab:Label(" ")
+
     end
 
     --------------------------------------------------
@@ -463,7 +482,7 @@ function sex()
     if game.PlaceId == 8304191830 then
         local misc = serv:Channel("Misc")
 
-        misc:Toggle("Auto Summon {Tickets}", getgenv().autosummontickets, function(bool)
+        misc:Toggle("Auto Summon {Use Ticket 1}", getgenv().autosummontickets, function(bool)
             getgenv().autosummontickets = bool
             while getgenv().autosummontickets do
                 task.wait()
@@ -477,7 +496,7 @@ function sex()
             updatejson()
         end)
 
-        misc:Toggle("Auto Summon {Gems - 1}", getgenv().autosummongem, function(bool)
+        misc:Toggle("Auto Summon {Buy 1}", getgenv().autosummongem, function(bool)
             getgenv().autosummongem = bool
             while getgenv().autosummongem do
                 task.wait()
@@ -492,7 +511,7 @@ function sex()
             updatejson()
         end)
 
-        misc:Toggle("Auto Summon {Gems - 10}", getgenv().autosummongem10, function(bool)
+        misc:Toggle("Auto Summon {Buy 10}", getgenv().autosummongem10, function(bool)
             getgenv().autosummongem10 = bool
             while getgenv().autosummongem10 do
                 task.wait()
@@ -518,12 +537,13 @@ function sex()
     end)
     credits:Label(" ")
 
-end -- sex() function end
+end
 
 --------------------------------------------------
 --------------------------------------------------
 
-if isfile(savefilename) then -- checks if file exist or not
+---// Checks if file exist or not\\---
+if isfile(savefilename) then 
     sex()
 else
     local xdata = {
@@ -577,9 +597,9 @@ else
 
     sex()
 end
+--------------------------------------------------
 
---------------------------------------------------
---------------------------------------------------
+
 
 ------// Auto Farm \\------
 coroutine.resume(coroutine.create(function()
@@ -588,21 +608,57 @@ coroutine.resume(coroutine.create(function()
         
         if getgenv().AutoFarm and not getgenv().disableatuofarm then
             if game.PlaceId ~= 8304191830 then
+                x = 4
+                y = 3
+                z = 4
 
                 for i = 1, 4 do
                     local unitinfo = getgenv().SelectedUnits["U" .. i]
                     if unitinfo ~= nil then
-
                         local unitinfo_ = unitinfo:split(" #")
                         local pos = getgenv().SpawnUnitPos["UP" .. i]
+
+                        --place units 0
                         local args = {
                             [1] = unitinfo_[2],
                             [2] = CFrame.new(Vector3.new(pos["x"], pos["y"], pos["z"]), Vector3.new(0, 0, -1))
                         }
+                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
 
-                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(
-                            args))
+                        --place units 1
+                        local args = {
+                            [1] = unitinfo_[2],
+                            [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"], pos["z"]), Vector3.new(0, 0, -1))
+                        }
+                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
 
+                        --place units 2 
+                        local args = {
+                            [1] = unitinfo_[2],
+                            [2] = CFrame.new(Vector3.new(pos["x"], pos["y"], pos["z"] + z), Vector3.new(0, 0, -1))
+                        }
+                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+
+                        --place units 3 
+                        local args = {
+                            [1] = unitinfo_[2],
+                            [2] = CFrame.new(Vector3.new(pos["x"] - x, pos["y"], pos["z"] + z), Vector3.new(0, 0, -1))
+                        }
+                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+
+                        --place units 4
+                        local args = {
+                            [1] = unitinfo_[2],
+                            [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] + y, pos["z"] + z), Vector3.new(0, 0, -1))
+                        }
+                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
+
+                        --place units 5
+                        local args = {
+                            [1] = unitinfo_[2],
+                            [2] = CFrame.new(Vector3.new(pos["x"], pos["y"] + y, pos["z"]), Vector3.new(0, 0, -1))
+                        }
+                        game:GetService("ReplicatedStorage").endpoints.client_to_server.spawn_unit:InvokeServer(unpack(args))
                     end
                 end
             end
@@ -612,49 +668,18 @@ end))
 
 ------// Auto Leave \\------
 coroutine.resume(coroutine.create(function()
-    while task.wait(2) do
-        if getgenv().AutoFarm then
-            if  game.PlaceId ~= 8304191830 then
-
-                function afc()
-                    game.Players.LocalPlayer.PlayerGui.ResultsUI.Enabled = false
-                    task.wait(1.5)
-
-                    local VirtualInputManager = game:GetService("VirtualInputManager")
-                    local X, Y = 0, 0
-                    VirtualInputManager:SendMouseButtonEvent(X, Y, 0, true, game, 1)
-                    VirtualInputManager:SendMouseButtonEvent(X, Y, 0, false, game, 1)
-                    
-
-                    if game:GetService("Workspace")["_DATA"].GameFinished.Value == true then
-                        webhook()
-                        task.wait(2)
-                    warn("Teleporting Back To Lobby....")
-                    game:GetService("ReplicatedStorage").endpoints.client_to_server.teleport_back_to_lobby:InvokeServer()
-                    task.wait(15)
-                    end
-                end
-
-                function clicknext()
-                    if game.Players.LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
-                        for i,v in pairs(getconnections(game.Players.LocalPlayer.PlayerGui.ResultsUI.Holder.Buttons.Next.Activated)) do
-                            v:Fire()
-                        end
-                    end
-                end
-
-
-                if game.Players.LocalPlayer.PlayerGui.ResultsUI.Enabled == true then
-                    spawn(function()
-                        clicknext()
-                    end)
-                    spawn(function()
-                        afc()
-                    end)
-                end
-            end
-        end
-    end
+	local GameFinished = game:GetService("Workspace"):WaitForChild("_DATA"):WaitForChild("GameFinished")
+	GameFinished:GetPropertyChangedSignal("Value"):Connect(function()
+	print("Changed", GameFinished.Value == true)
+	if GameFinished.Value == true then
+        repeat task.wait() until  game:GetService("Players").LocalPlayer.PlayerGui.ResultsUI.Enabled == true
+        task.wait()
+		pcall(function() webhook() end)
+		print("next")
+		task.wait(2)
+		game:GetService("TeleportService"):Teleport(8304191830, game.Players.LocalPlayer)
+	end
+	end)
 end))
 
 ------// Auto Upgrade \\------
@@ -662,7 +687,7 @@ coroutine.resume(coroutine.create(function()
     while task.wait() do
         if getgenv().autoupgrade then
             if game.PlaceId ~= 8304191830 then
-                local max = 7
+                local max = 8
                 repeat task.wait() until game:GetService("Workspace"):FindFirstChild("_UNITS")
                 for i, v in ipairs(game:GetService("Workspace")["_UNITS"]:GetChildren()) do
                     repeat task.wait() until v:FindFirstChild("_stats")
@@ -670,9 +695,7 @@ coroutine.resume(coroutine.create(function()
                         repeat task.wait() until v:FindFirstChild("_stats"):FindFirstChild("upgrade")
 
                         if v["_stats"].upgrade.Value == 0 or v["_stats"].upgrade.Value <= max then
-                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(
-                                v)
-                            --print(max, v["_stats"].upgrade.Value)
+                            game:GetService("ReplicatedStorage").endpoints.client_to_server.upgrade_unit_ingame:InvokeServer(v)
                         end
                     end
                 end
@@ -751,4 +774,3 @@ coroutine.resume(coroutine.create(function()
         end
     end
 end))
-
